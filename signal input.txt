@@ -1,0 +1,35 @@
+function data = acquireUSB4704Data(channel)
+    % acquireUSB4704Data Acquires data from USB-4704 analog input.
+    %
+    % Input:
+    %   channel - String specifying the channel to read from (e.g., 'ai0').
+    %
+    % Output:
+    %   data - Acquired data from the specified channel.
+
+    % Check for the Data Acquisition Toolbox
+    if ~license('test', 'Data_Acquisition_Toolbox')
+        error('Data Acquisition Toolbox is not available.');
+    end
+
+    % Create a data acquisition session
+    daqSession = daq("ni");
+    
+    % Add the specified analog input channel
+    try
+        addAnalogInputChannel(daqSession, 'USB4704', channel, 'Voltage');  
+    catch ME
+        error('Error adding channel: %s', ME.message);
+    end
+
+    % Start the session and acquire data
+    try
+        data = startForeground(daqSession);  % For synchronous acquisition
+    catch ME
+        error('Error acquiring data: %s', ME.message);
+    end
+
+    % Clean up
+    stop(daqSession);
+    delete(daqSession);
+end
