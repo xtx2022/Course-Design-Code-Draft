@@ -33,3 +33,29 @@ function data = acquireUSB4704Data(channel)
     stop(daqSession);
     delete(daqSession);
 end
+
+
+% Create an instance of the InstantAI control
+instantAiCtrl = InstantAiCtrl();  % Initialize your control
+
+% Configure your channels as needed
+startChannel = 0;          % Starting from the first channel
+channelCount = 3;         % Reading from 3 channels
+samplesToRead = 100;      % Number of samples to read
+
+% Preallocate data array
+data = zeros(samplesToRead, channelCount);
+
+% Start the acquisition process
+instantAiCtrl.Start();
+
+% Read data from the specified channels
+data = instantAiCtrl.read(startChannel, channelCount, data);
+
+% Stop the acquisition
+instantAiCtrl.Stop();
+
+% Clean up
+instantAiCtrl.Dispose();
+
+% Now, 'data' contains the acquired samples
